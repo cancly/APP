@@ -10,6 +10,35 @@ class NuovaTransazione extends StatefulWidget {
 }
 
 class _NuovaTransazioneState extends State<NuovaTransazione> {
+  verificaDenaro(value, controller) {
+    if (value.contains(RegExp('[a-zA-Z]'))) {
+      value = value.replaceAll(RegExp('[a-zA-Z]'), '');
+      print('entra');
+    }
+
+    if (value.contains(',')) {
+      value = value.replaceAll(',','');
+      print(value);
+    }
+
+    if (value.contains('..')) {
+      print('contiene ".."');
+      value = value.replaceAll('..', '.');
+    } else if (value.contains('.')) {
+      print('contiene "."');
+      print(value);
+      var f = value.substring(value.indexOf('.')).length - 1;
+      if (f > 2) {
+        value = value.substring(0, value.length - (value.substring(value.indexOf('.')).length - 3));
+      }
+
+    }
+
+    setState(() {
+      controller.text = value;
+      controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
+    });
+  }
 
   int _selection = 0;
   int _selection2 = 0;
@@ -99,27 +128,7 @@ class _NuovaTransazioneState extends State<NuovaTransazione> {
                                                 textAlign: TextAlign.end,
                                                 controller: txt,
                                                 onChanged: (String value) {
-                                                  if (value.contains(RegExp('[a-zA-Z]'))) {
-                                                    value = value.replaceAll(RegExp('[a-zA-Z]'), '');
-                                                    print('entra');
-                                                  }
-
-                                                  if (value.contains('..')) {
-                                                    print('contiene ".."');
-                                                    value = value.replaceAll('..', '.');
-                                                  } else if (value.contains('.')) {
-                                                    print('contiene "."');
-                                                    print(value);
-                                                    var f = value.substring(value.indexOf('.')).length - 1;
-                                                    if (f > 2) {
-                                                      value = value.substring(0, value.length - (value.substring(value.indexOf('.')).length - 3));
-                                                    }
-                                                  }
-
-                                                  setState(() {
-                                                    txt.text = value;
-                                                    txt.selection = TextSelection.fromPosition(TextPosition(offset: txt.text.length));
-                                                  });
+                                                  verificaDenaro(value, txt);
                                                 },
                                                 style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                                                 keyboardType: TextInputType.number,
@@ -320,27 +329,7 @@ class _NuovaTransazioneState extends State<NuovaTransazione> {
                                                 textAlign: TextAlign.end,
                                                 controller: txt3,
                                                 onChanged: (String value) {
-                                                  if (value.contains(RegExp('[a-zA-Z]'))) {
-                                                    value = value.replaceAll(RegExp('[a-zA-Z]'), '');
-                                                    print('entra');
-                                                  }
-
-                                                  if (value.contains('..')) {
-                                                    print('contiene ".."');
-                                                    value = value.replaceAll('..', '.');
-                                                  } else if (value.contains('.')) {
-                                                    print('contiene "."');
-                                                    print(value);
-                                                    var f = value.substring(value.indexOf('.')).length - 1;
-                                                    if (f > 2) {
-                                                      value = value.substring(0, value.length - (value.substring(value.indexOf('.')).length - 3));
-                                                    }
-                                                  }
-
-                                                  setState(() {
-                                                    txt3.text = value;
-                                                    txt3.selection = TextSelection.fromPosition(TextPosition(offset: txt3.text.length));
-                                                  });
+                                                  verificaDenaro(value, txt3);
                                                 },
                                                 style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                                                 keyboardType: TextInputType.number,

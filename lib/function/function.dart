@@ -7,6 +7,7 @@ verificaTipo(tipo) {
       'categoria': tipo['categoria'],
       'valore': tipo['valore'],
       'data': tipo['data'],
+      'descrizione': tipo['descrizione']
     };
     transazioni.add(transazione);
   } else {
@@ -17,6 +18,7 @@ verificaTipo(tipo) {
         'categoria': tipo['categoria'],
         'valore': tipo['valore'],
         'data': data,
+        'descrizione': tipo['descrizione']
       };
 
       transazioni.add(transazione);

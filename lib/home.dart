@@ -20,10 +20,12 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
 
-    for (var tipo in dati) {
-      verificaTipo(tipo);
+    if (verificaFatta==false) {
+      for (var tipo in dati) {
+        verificaTipo(tipo);
+      }
+      verificaFatta = true;
     }
-
   }
 
   void _onItemTapped(int index) {

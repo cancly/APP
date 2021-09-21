@@ -5,7 +5,7 @@ var colorePrincipale = Color(0xFF1565C0); /// o Colors.green[800]
 const coloreSpesa = Colors.red;
 const coloreGuadagni = Colors.green;
 const coloreCard = Color(0xFF212121);
-
+var verificaFatta = false;
 
 
 var categoria_costi = [

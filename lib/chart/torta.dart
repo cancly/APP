@@ -23,14 +23,13 @@ class CardTorta extends StatelessWidget {
     var datiGrafico = <PieChartSectionData>[];
     Simbolo simbolo;
     for (var transazione in transazioni) {
-      print(transazione['data'].isBefore(DateTime.now()));
+
 
       if (categoria == categoria_costi) {
         if (transazione['data'].isBefore(DateTime.now()) && transazione['valore'] < 0) {
           simbolo = transazione['categoria'][0];
           datiGrafico.add(
-              PieChartSectionData(value: ((-1) *
-                  (double.parse(transazione['valore'].toString())).toDouble()),
+              PieChartSectionData(value: ((-1) * (double.parse(transazione['valore'].toString()))),
                   color: simbolo.colore,
                   radius: 4.0,
                   showTitle: false)
@@ -40,11 +39,12 @@ class CardTorta extends StatelessWidget {
         if (transazione['data'].isBefore(DateTime.now()) && transazione['valore'] > 0) {
           simbolo = transazione['categoria'][0];
           datiGrafico.add(
-              PieChartSectionData(value: ((-1) *
-                  (int.parse(transazione['valore'].toString())).toDouble()),
-                  color: simbolo.colore,
-                  radius: 4.0,
-                  showTitle: false)
+            PieChartSectionData(
+              value: ((-1) * (double.parse(transazione['valore'].toString()))),
+              color: simbolo.colore,
+              radius: 4.0,
+              showTitle: false
+            )
           );
         }
       }

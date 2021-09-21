@@ -2,19 +2,26 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio/constants/const.dart';
 import 'package:portfolio/card/transazioni_con_singolo_tipo.dart';
+import 'package:portfolio/home.dart';
 
-class Transazione extends StatelessWidget {
+class Transazione extends StatefulWidget {
   const Transazione({required this.dati});
 
   final dati;
 
   @override
+  State<Transazione> createState() => _TransazioneState();
+}
+
+class _TransazioneState extends State<Transazione> {
+  var modifica = false;
+
+  @override
   Widget build(BuildContext context) {
 
-    String strData = getData(dati['data']);
-    var valore = dati['valore'];
+    String strData = getData(widget.dati['data']);
+    var valore = widget.dati['valore'];
     var strValore;
-
     if (valore < 0) {
       strValore = "$valore €";
     } else {
@@ -40,8 +47,8 @@ class Transazione extends StatelessWidget {
                     Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          dati['categoria'][0],
-                          dati['categoria'][1],
+                          widget.dati['categoria'][0],
+                          widget.dati['categoria'][1],
                           Text(' • $strData', style: TextStyle(color: Colors.grey, fontSize: 10))
                         ]
                     ), //row transazione sinistra
@@ -66,21 +73,74 @@ class Transazione extends StatelessWidget {
           appBar: AppBar(
               centerTitle: true,
               backgroundColor: Colors.black,
-              title: dati['categoria'][1]
+              title: widget.dati['categoria'][1],
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.delete_outlined),
+                  onPressed: () {
+                    var index = transazioni.indexOf(widget.dati);
+                    transazioni.removeAt(index);
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+                  },
+                )
+              ],
           ),
           body: SingleChildScrollView(
             child: Column(
               children: [
                 Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 200,
-                    alignment: Alignment.center,
-                    child: Transform.scale(scale: 2.2, child: dati['categoria'][0])
+                    height: 100,
+                    alignment: Alignment.bottomCenter,
+                    child: Transform.translate(child: Transform.scale(scale: 2.2, child: widget.dati['categoria'][0]), offset: Offset(10,0)),
                 ),
-
-                CardTransazioni(dati: dati, isPassato: true, titolo: 'transazioni simili passate'),
-                CardTransazioni(dati: dati, isPassato: false, titolo: 'transazioni simili in arrivo'),
-                SizedBox(height: 20)
+                SizedBox(height: 30),
+                Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+                  color: Colors.grey[900],
+                  child: Container(
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(),
+                            Text('${widget.dati['valore']} €', style: TextStyle(color: widget.dati['valore']<0? Colors.red : Colors.green, fontSize: 20)),
+                            IconButton(
+                              icon: Icon(modifica? Icons.edit : Icons.edit_outlined),
+                              onPressed: () {
+                                setState(() {
+                                  modifica? modifica = false : modifica = true;
+                                  print(modifica);
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Data:'),
+                            Text('${widget.dati['data'].day}-${widget.dati['data'].month}-${widget.dati['data'].year}', style: TextStyle(fontSize: 20)),
+                          ],
+                        ),
+                        if (widget.dati['descrizione'] != '') Row(
+                          children: [
+                            Text('Descrizione:'),
+                            Text('${widget.dati['descrizione']}',  style: TextStyle(color: Colors.white, fontSize: 15)),
+                          ],
+                        ),
+                      ]
+                    ),
+                  )
+                ),
+                Divider(color: Colors.grey[850], height: 1, endIndent: 20, indent: 20),
+                CardTransazioni(dati: widget.dati, isPassato: true, titolo: 'transazioni simili passate'),
+                CardTransazioni(dati: widget.dati, isPassato: false, titolo: 'transazioni simili in arrivo'),
+                SizedBox(height: 20),
               ],
             ),
           ),
