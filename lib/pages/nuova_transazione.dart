@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/constants/const.dart';
 import 'package:portfolio/function/function.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
 
 class NuovaTransazione extends StatefulWidget {
   const NuovaTransazione({Key? key}) : super(key: key);
@@ -511,56 +514,65 @@ class _NuovaTransazioneState extends State<NuovaTransazione> {
             ),
 
             floatingActionButton: FloatingActionButton.extended(
-                onPressed: () {
+                backgroundColor: colorePrincipale,
+                label: Text('aggiungi', style: TextStyle(color: Colors.white)),
+                icon: Icon(Icons.send, color: Colors.white),
+                onPressed: () async {
                   var dati1;
+                  var database;
+
+                  var databasesPath = await getDatabasesPath();
+                  String path = join(databasesPath, 'database.db');
+
+                  database = await openDatabase(path, version: 1);
+
+
                   if (DefaultTabController.of(context)!.index == 0) {
                     //guadagno
 
 
-                    if (txt.text != '') {
-                      var giorni = 0;
-                      var mesi = 0;
-                      var anni = 0;
-                      if (siRipete) {
-                        switch (_selection2) {
-                          case 0:
-                            giorni = int.parse(txt2.text);
-                            break;
-                          case 1:
-                            mesi = int.parse(txt2.text);
-                            break;
-                          case 2:
-                            anni = int.parse(txt2.text);
-                            break;
-                        }
-                      }
-                      print((txt.text).runtimeType);
-                      print(double.parse(txt.text).runtimeType);
-                      dati1 = {
-                        'categoria': categoria_guadagni[_selection],
-                        'valore': double.parse(txt.text),
-                        'data': selectedDate,
-                        'descrizione': descrizione.text,
-                        'siRipete': siRipete,
-                        'giorni': giorni,
-                        'mesi': mesi,
-                        'anni': anni,
-                      };
-                      verificaTipo(dati1);
-                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('aggiunta transazione di ${dati1['valore']} €'),
-                        action: SnackBarAction(
-                          textColor: colorePrincipale,
-                          label: 'annulla',
-                          onPressed: () {
-                            //TODO: annullare
-                          },
-                        ),
-                        backgroundColor: coloreCard,
-                      ));
-                      Navigator.pop(context);
-                    }
+                            if (txt.text != '') {
+                              var giorni = 0;
+                              var mesi = 0;
+                              var anni = 0;
+                              if (siRipete) {
+                                switch (_selection2) {
+                                  case 0:
+                                    giorni = int.parse(txt2.text);
+                                    break;
+                                  case 1:
+                                    mesi = int.parse(txt2.text);
+                                    break;
+                                  case 2:
+                                    anni = int.parse(txt2.text);
+                                    break;
+                                }
+                              }
+                              String strData = selectedDate.toString();
+                              await database.transaction((txn) async {
+                                int result = await txn.rawInsert("INSERT INTO dati(id_catgoria, valore, descrizione, data, siRipete, giorni, mesi, anni) VALUES($_selection, '${txt.text}', '${descrizione.text}','$strData' ,$siRipete, $giorni, $mesi, $anni)");
+                                verificaTipo(result);
+                                return ('inserted1: $result');
+                              });
+
+
+                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text('aggiunta transazione di ${txt3.text} €'),
+                                action: SnackBarAction(
+                                  textColor: colorePrincipale,
+                                  label: 'annulla',
+                                  onPressed: () {
+                                    //TODO: annullare
+                                  },
+                                ),
+                                backgroundColor: coloreCard,
+                              ));
+                              Navigator.pop(context);
+                            }
+
+
+
                   } else {
                     //spesa
                     if (txt3.text != '') {
@@ -581,20 +593,19 @@ class _NuovaTransazioneState extends State<NuovaTransazione> {
                             break;
                         }
                       }
-                      dati1 = {
-                        'categoria': categoria_costi[_selection3],
-                        'valore': (double.parse(txt3.text) * -1),
-                        'data': selectedDate,
-                        'descrizione': descrizione2.text,
-                        'siRipete': siRipete,
-                        'giorni': giorni,
-                        'mesi': mesi,
-                        'anni': anni,
-                      };
-                      verificaTipo(dati1);
+                      String strData = selectedDate.toString();
+                      await database.transaction((txn) async {
+                        int result = await txn.rawInsert("INSERT INTO dati(id_catgoria, valore, descrizione, data, siRipete, giorni, mesi, anni) VALUES($_selection3, '-${txt3.text}', '${descrizione2.text}','$strData' ,$siRipete, $giorni, $mesi, $anni)");
+                        print(result);
+                        print('id: $result');
+                        verificaTipo(result);
+                        return 0;
+                      });
+
+
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('aggiunta transazione di ${dati1['valore']} €'),
+                        content: Text('aggiunta transazione di -${txt3.text} €'),
                         action: SnackBarAction(
                           textColor: colorePrincipale,
                           label: 'annulla',
@@ -608,9 +619,6 @@ class _NuovaTransazioneState extends State<NuovaTransazione> {
                     }
                   }
                 },
-                backgroundColor: colorePrincipale,
-                label: Text('aggiungi', style: TextStyle(color: Colors.white)),
-                icon: Icon(Icons.send, color: Colors.white)
             ),
           );
         })

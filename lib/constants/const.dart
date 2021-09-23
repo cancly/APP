@@ -9,51 +9,12 @@ var verificaFatta = false;
 
 
 var categoria_costi = [
-  [
-    Simbolo(icona: Icons.home, colore: Colors.blue),
-    Text('affitto', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.shopping_bag, colore: Colors.green),
-    Text('spesa', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.pets, colore: Colors.yellow),
-    Text('animale', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.directions_bus, colore: Colors.tealAccent),
-    Text('trasporto', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.phone, colore: Colors.red),
-    Text('telefono', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.school, colore: Colors.lightGreenAccent),
-    Text('istruzione', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.explore, colore: Colors.white70),
-    Text('viaggo', style: TextStyle(color: Colors.white))
-  ],
-
 ];
 
 var categoria_guadagni = [
-  [
-    Simbolo(icona: Icons.redeem_outlined, colore: Colors.green),
-    Text('regalo', style: TextStyle(color: Colors.white)),
-  ],
-  [
-    Simbolo(icona: Icons.payments, colore: Colors.yellow),
-    Text('stipendio', style: TextStyle(color: Colors.white))
-  ],
-  [
-    Simbolo(icona: Icons.home, colore: Colors.red),
-    Text('affitto', style: TextStyle(color: Colors.white))
-  ],
 ];
+
+
 
 List dati = <Map>[
   {
@@ -93,3 +54,26 @@ List dati = <Map>[
 List transazioni = <Map>[]; ///categoria, valore, data
 
 var dataLimite = DateTime.utc(2023, 09, 17);
+
+Map icone = {
+  'home': Icons.home,
+  'shopping_bag':Icons.shopping_bag,
+  'pets': Icons.pets,
+  'directions_bus': Icons.directions_bus,
+  'phone': Icons.phone,
+  'school': Icons.school,
+  'explore': Icons.explore,
+  'redeem_outlined': Icons.redeem_outlined,
+  'payments': Icons.payments,
+  'home': Icons.home
+};
+
+Map colori = {
+  'blue': Colors.blue,
+  'green':Colors.green,
+  'yellow': Colors.yellow,
+  'tealAccent': Colors.tealAccent,
+  'red': Colors.red,
+  'lightGreenAccent': Colors.lightGreenAccent,
+  'white70': Colors.white70,
+};

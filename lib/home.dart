@@ -5,6 +5,8 @@ import 'package:portfolio/pages/home%20tab/generale.dart';
 import 'package:portfolio/pages/home%20tab/spese.dart';
 import 'package:portfolio/pages/home%20tab/guadagni.dart';
 import 'package:portfolio/pages/nuova_transazione.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -16,16 +18,40 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   int _selectedIndex = 1;
 
+  tipi() async {
+    Database database;
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'database.db');
+    print(path);
+    database = await openDatabase(path, version: 1,
+        onCreate: (Database db, int version) async {
+          // When creating the db, create the table
+          await db.execute('CREATE TABLE categorie (id INTEGER PRIMARY KEY AUTOINCREMENT, icona TEXT, colore INTEGER, testo TEXT, guadagno BOOL)');
+          await db.execute('CREATE TABLE transazioni (id INTEGER PRIMARY KEY AUTOINCREMENT, id_catgoria TEXT, valore INTEGER,descrizione TEXT, data TEXT)');
+          await db.execute('CREATE TABLE dati (id INTEGER PRIMARY KEY AUTOINCREMENT, id_catgoria TEXT, valore INTEGER,descrizione TEXT, data TEXT,siRipete BOOL, giorni INTEGER, mesi INTEGER, anni INTEGER)');
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('home', 'blue', 'affitto', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('shopping_bag', 'green', 'spesa', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('pets', 'yellow', 'animale', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('directions_bus', 'tealAccent', 'trasporto', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('phone', 'red', 'telefono', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('school', 'lightGreenAccent', 'istruzione', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('explore', 'white70', 'viaggo', false)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('redeem_outlined', 'green', 'regalo', true)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('payments', 'yellow', 'stipendio', true)");
+          await db.execute("INSERT INTO categorie(icona,colore,testo,guadagno) VALUES ('home', 'red', 'affitto', true)");
+        }
+    );
+
+  }
+
   @override
   void initState() {
     super.initState();
 
-    if (verificaFatta==false) {
-      for (var tipo in dati) {
-        verificaTipo(tipo);
-      }
-      verificaFatta = true;
+    if (categoria_costi.isEmpty) {
+      tipi();
     }
+
   }
 
   void _onItemTapped(int index) {
@@ -44,7 +70,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-
+    tipi();
 
 
     return Scaffold(

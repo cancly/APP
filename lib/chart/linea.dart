@@ -2,7 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class GraficoLinea extends StatelessWidget {
-  const GraficoLinea({Key? key}) : super(key: key);
+  final range;
+
+  const GraficoLinea({this.range});
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +91,7 @@ class GraficoLinea extends StatelessWidget {
                   colors: [Colors.white],
                   isCurved: true,
                   spots: [
+                    //TODO: GeneraSpot(widget.range)
                     FlSpot(0, 0),
                     FlSpot(1, 5),
                     FlSpot(2, 4),

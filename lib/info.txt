@@ -1,0 +1,23 @@
+database:
+    - database:
+        - dati:
+            - id INTEGER PRIMARY KEY AUTOINCREMENT
+            - id_catgoria TEXT
+            - valore INTEGER
+            - descrizione TEXT
+            - data TEXT
+            - siRipete BOOL
+            - giorni INTEGER
+            - mesi INTEGER
+            - anni INTEGER
+        - transazioni:
+            - id INTEGER PRIMARY KEY AUTOINCREMENT
+            - id_catgoria TEXT
+            - valore INTEGER
+            - descrizione TEXT- data TEXT
+        - categorie:
+            - id INTEGER PRIMARY KEY AUTOINCREMENT
+            - icona TEXT
+            - colore INTEGER
+            - testo TEXT
+            - guadagno BOOL

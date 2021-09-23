@@ -3,6 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio/constants/const.dart';
 import 'package:portfolio/widget/transazioni.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+
 
 class CardTransazioni extends StatefulWidget {
   const CardTransazioni({required this.titolo, required this.isPassato});
@@ -18,6 +21,9 @@ class _CardTransazioniState extends State<CardTransazioni> {
   @override
   Widget build(BuildContext context) {
     var max = 3;
+    var lista = <Widget>[];
+
+
 
     getTransazione(data) {
       {
@@ -39,21 +45,41 @@ class _CardTransazioniState extends State<CardTransazioni> {
       return totale;
     }
 
-    printTransazioni (max) {
-      var lista = <Widget>[];
-      var a = 0;
-      for (var i in transazioni) {
-        if (getTransazione(i['data'])) {
-            lista.add(Transazione(dati: i));
-            a++;
-            if (a == max) {
-              break;
-            }
+    printTransazioni (max) async {
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, 'database.db');
+
+      Database database = await openDatabase(path, version: 1,
+          onCreate: (Database db, int version) async {
+            // When creating the db, create the table
+            await db.execute(
+                'CREATE TABLE Test (id INTEGER PRIMARY KEY AUTOINCREMENT, id_catgoria TEXT, valore INTEGER,descrizione TEXT, data TEXT,siRipete BOOL, giorni INTEGER, mesi INTEGER, anni INTEGER)'
+            );
           }
+      );
+      var dati = await database.rawQuery('SELECT * FROM transazioni');
+      var dati1 = new List.from(dati);
+      dati1.sort((a, b) => DateTime.parse('${a['data']}').compareTo(DateTime.parse('${b['data']}')));
+      print(dati1);
+      var a = 0;
+      for (var i in dati1) {
+
+
+        if (getTransazione(DateTime.parse('${i['data']}'))) {
+          lista.add(Transazione(dati: i));
+          a++;
+          if (a == max && a != 0) {
+            break;
+          }
+        }
       }
-      return lista;
+
     }
 
+    getLista(max) {
+      printTransazioni(max);
+      return lista;
+    }
 
     return OpenContainer(
         closedBuilder: (_, openContainer) {
@@ -69,7 +95,7 @@ class _CardTransazioniState extends State<CardTransazioni> {
                       children: [
                         Text(widget.titolo, style: const TextStyle(color: Colors.white, fontSize: 20)),
                         const SizedBox(height: 5),
-                        for (var i in printTransazioni(max)) i,
+                        for (var i in getLista(max)) i,
                         const SizedBox(height: 10),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -109,7 +135,7 @@ class _CardTransazioniState extends State<CardTransazioni> {
                       physics: const BouncingScrollPhysics(),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [for (var i in printTransazioni(100000)) i]
+                          children: [for (var i in getLista(0)) i]
                       )
                     )
                   )

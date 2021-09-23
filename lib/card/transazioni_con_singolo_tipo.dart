@@ -80,7 +80,7 @@ class _CardTransazioniState extends State<CardTransazioni> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(widget.titolo, style: TextStyle(color: Colors.white, fontSize: 20)),
+                    Text(widget.titolo, style: TextStyle(color: Colors.white, fontSize: 19)),
                     Container(
                       padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                       decoration: BoxDecoration(
