@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfolio/card/transazioni_con_filtro.dart';
 import 'package:portfolio/chart/torta.dart';
 import 'package:portfolio/constants/const.dart';
+import 'package:portfolio/function/function.dart';
 
 class Spese extends StatefulWidget {
   const Spese({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _SpeseState extends State<Spese> {
 
   @override
   Widget build(BuildContext context) {
+    var saldoTotale = getSaldo('S');
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -48,7 +50,16 @@ class _SpeseState extends State<Spese> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('500 €', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white)),
+                      FutureBuilder(
+                        future: getSaldo('S'),
+                        builder: (BuildContext, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return Text('${snapshot.data} €', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white));
+                          } else {
+                            return Text('calcolo', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white));
+                          }
+                        },
+                      ),
                       PopupMenuButton<int>(
                           tooltip: 'scegli arco temporale',
                           child: Container(

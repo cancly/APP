@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/card/transazioni.dart';
 import 'package:portfolio/chart/linea.dart';
+import 'package:portfolio/function/function.dart';
 
 class Generale extends StatefulWidget {
   const Generale({Key? key}) : super(key: key);
@@ -29,7 +30,7 @@ class _GeneraleState extends State<Generale> {
 
   @override
   Widget build(BuildContext context) {
-    var saldoTotale = 500.32;
+
 
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
@@ -48,7 +49,18 @@ class _GeneraleState extends State<Generale> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${saldoTotale} €', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white)),
+                      FutureBuilder(
+                        future: getSaldo('T'),
+                        builder: (BuildContext, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return Text('${snapshot.data} €', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white));
+                          } else {
+                            return Text('calcolo', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white));
+                          }
+                        },
+
+
+                      ),
                       PopupMenuButton<int>(
                           tooltip: 'scegli arco temporale',
                           child: Container(
@@ -93,11 +105,16 @@ class _GeneraleState extends State<Generale> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('rispetto al periodo precedente', style: TextStyle(color: Colors.grey)), //guadagno o perdita
-                      Row(
-                        children: [
-                          Text('+03.45€  ', style: TextStyle(color: Colors.green)),
-                          Text('+10.33%', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, backgroundColor: Colors.green.withOpacity(0.1)))
-                        ],
+                      FutureBuilder(
+                        future: calcolaDelta(_selection, 'T'),
+                        builder: (BuildContext, AsyncSnapshot snapshot) {
+                          return Row(
+                            children: [
+                              Text(snapshot.data[0]>=0? '+${snapshot.data[0]}€  ' : '-${snapshot.data[0]}€  ', style: TextStyle(color: snapshot.data[0]>=0? Colors.green : Colors.red)),
+                              Text(snapshot.data[0]>=0? '+${snapshot.data[1].toStringAsFixed(2)}%' : '-${snapshot.data[1].toStringAsFixed(2)}%', style: TextStyle(color: snapshot.data[0]>=0? Colors.green : Colors.red, fontWeight: FontWeight.bold, backgroundColor: snapshot.data[0]>=0? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1))),
+                            ],
+                          );
+                        }
                       ), //TODO: var
                     ],
                   ) : SizedBox(),

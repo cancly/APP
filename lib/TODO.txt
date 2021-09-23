@@ -1,0 +1,21 @@
+sistemare i delta
+
+sistemare grafici a torta
+
+sistemare gruppi transazioni con filtro
+
+sistemare singola transazione
+
+sistemare eliminazione
+    - eliminazione singola
+    - eliminazione gruppo
+
+sistemare modifica
+    - modifica singola
+    - modifica gruppo
+
+pagina gruppi
+
+aggiunta gruppi
+
+elimina tutti i dati

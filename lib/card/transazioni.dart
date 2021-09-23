@@ -21,7 +21,6 @@ class _CardTransazioniState extends State<CardTransazioni> {
   @override
   Widget build(BuildContext context) {
     var max = 3;
-    var lista = <Widget>[];
 
 
 
@@ -46,25 +45,17 @@ class _CardTransazioniState extends State<CardTransazioni> {
     }
 
     printTransazioni (max) async {
+      var lista = <Widget>[];
+
       var databasesPath = await getDatabasesPath();
       String path = join(databasesPath, 'database.db');
 
-      Database database = await openDatabase(path, version: 1,
-          onCreate: (Database db, int version) async {
-            // When creating the db, create the table
-            await db.execute(
-                'CREATE TABLE Test (id INTEGER PRIMARY KEY AUTOINCREMENT, id_catgoria TEXT, valore INTEGER,descrizione TEXT, data TEXT,siRipete BOOL, giorni INTEGER, mesi INTEGER, anni INTEGER)'
-            );
-          }
-      );
+      Database database = await openDatabase(path, version: 1);
       var dati = await database.rawQuery('SELECT * FROM transazioni');
       var dati1 = new List.from(dati);
-      dati1.sort((a, b) => DateTime.parse('${a['data']}').compareTo(DateTime.parse('${b['data']}')));
-      print(dati1);
+      dati1.sort((a, b) => DateTime.parse('${b['data']}').compareTo(DateTime.parse('${a['data']}')));
       var a = 0;
       for (var i in dati1) {
-
-
         if (getTransazione(DateTime.parse('${i['data']}'))) {
           lista.add(Transazione(dati: i));
           a++;
@@ -73,11 +64,11 @@ class _CardTransazioniState extends State<CardTransazioni> {
           }
         }
       }
-
+      return lista;
     }
 
-    getLista(max) {
-      printTransazioni(max);
+    getLista(max) async {
+      var lista = await printTransazioni(max);
       return lista;
     }
 
@@ -90,28 +81,37 @@ class _CardTransazioniState extends State<CardTransazioni> {
               color: Colors.grey[900],
               child: Container(
                   margin: const EdgeInsets.fromLTRB(15, 15, 15, 10),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(widget.titolo, style: const TextStyle(color: Colors.white, fontSize: 20)),
-                        const SizedBox(height: 5),
-                        for (var i in getLista(max)) i,
-                        const SizedBox(height: 10),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                  child: FutureBuilder(
+                      future: getLista(max),
+                      builder: (BuildContext, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if(contaTransazioni() > 3)TextButton(
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.more_horiz, color: Colors.white),
-                                    Text(' visualizza tutte', style: TextStyle(color: Colors.white))
-                                  ],
-                                ),
-                                onPressed: openContainer,
-                              )
-                            ]
-                        )
-                      ]
+                              Text(widget.titolo, style: const TextStyle(color: Colors.white, fontSize: 20)),
+                              const SizedBox(height: 5),
+                              for (var i in snapshot.data) i,
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  if(contaTransazioni() > 3)TextButton(
+                                    child: Row(
+                                      children: const [
+                                        Icon(Icons.more_horiz, color: Colors.white),
+                                        Text(' visualizza tutte', style: TextStyle(color: Colors.white))
+                                      ],
+                                    ),
+                                    onPressed: openContainer,
+                                  )
+                                ]
+                              ),
+                            ],
+                          );
+                        } else {
+                          return SizedBox();
+                        }
+                      }
                   )
               )
           );
@@ -133,9 +133,18 @@ class _CardTransazioniState extends State<CardTransazioni> {
                     margin: const EdgeInsets.all(15),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [for (var i in getLista(0)) i]
+                      child: FutureBuilder(
+                        future: getLista(max),
+                        builder: (BuildContext, AsyncSnapshot snapshot) {
+                          if (snapshot.hasData) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [for (var i in snapshot.data) i]
+                            );
+                          } else {
+                            return SizedBox();
+                          }
+                        }
                       )
                     )
                   )

@@ -8,11 +8,9 @@ const coloreCard = Color(0xFF212121);
 var verificaFatta = false;
 
 
-var categoria_costi = [
-];
+var categoria_costi = [];
 
-var categoria_guadagni = [
-];
+var categoria_guadagni = [];
 
 
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Simbolo extends StatelessWidget {
-  const Simbolo({ required this.icona, required this.colore});
+  const Simbolo({ required this.icona, required this.colore, required this.id});
   final colore;
   final icona;
-
+  final id;
 
   @override
   Widget build(BuildContext context) {

@@ -3,7 +3,7 @@ database:
         - dati:
             - id INTEGER PRIMARY KEY AUTOINCREMENT
             - id_catgoria TEXT
-            - valore INTEGER
+            - valore REAL
             - descrizione TEXT
             - data TEXT
             - siRipete BOOL
@@ -13,7 +13,7 @@ database:
         - transazioni:
             - id INTEGER PRIMARY KEY AUTOINCREMENT
             - id_catgoria TEXT
-            - valore INTEGER
+            - valore REAL
             - descrizione TEXT- data TEXT
         - categorie:
             - id INTEGER PRIMARY KEY AUTOINCREMENT

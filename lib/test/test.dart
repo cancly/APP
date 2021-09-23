@@ -90,6 +90,23 @@ class _TestState extends State<Test> {
       print(DateTime.parse(risultato[0]['data']));
     }
 
+    eliminaTable(a, b) async {
+      var database;
+      var databasesPath = await getDatabasesPath();
+
+      String path = join(databasesPath, '$b.db');
+
+      database = await openDatabase(path, version: 1,
+          onCreate: (Database db, int version) async {
+            // When creating the db, create the table
+            await db.execute(
+                'CREATE TABLE $a (id INTEGER PRIMARY KEY AUTOINCREMENT, id_catgoria TEXT, valore INTEGER,descrizione TEXT, data TEXT,siRipete BOOL, giorni INTEGER, mesi INTEGER, anni INTEGER)'
+            );
+          }
+      );
+      database.rawQuery('DROP TABLE $a');
+    }
+
     DateTime data = DateTime.now();
 
     return Scaffold(
@@ -118,6 +135,11 @@ class _TestState extends State<Test> {
                 test('dati', 'database');
               },
               icon: Icon(Icons.info)),
+            IconButton(
+              onPressed: () {
+                eliminaTable('dati', 'database');
+              },
+              icon: Icon(Icons.delete, color: Colors.red)),
 
             Text('database transazioni'),
             IconButton(
@@ -135,6 +157,11 @@ class _TestState extends State<Test> {
                 elimina('transazioni', 'database');
               },
               icon: Icon(Icons.delete)),
+            IconButton(
+                onPressed: () {
+                  eliminaTable('transazioni', 'database');
+                },
+                icon: Icon(Icons.delete, color: Colors.red)),
 
             Text('database categorie'),
             IconButton(
@@ -152,6 +179,11 @@ class _TestState extends State<Test> {
                 elimina('categorie', 'database');
               },
               icon: Icon(Icons.delete)),
+            IconButton(
+                onPressed: () {
+                  eliminaTable('categorie', 'database');
+                },
+                icon: Icon(Icons.delete, color: Colors.red)),
 
           ],
         ),

@@ -7,14 +7,7 @@ creaDatabase() async {
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'demo.db');
 
-  database = await openDatabase(path, version: 1,
-    onCreate: (Database db, int version) async {
-      // When creating the db, create the table
-      await db.execute(
-        'CREATE TABLE Test (id INTEGER PRIMARY KEY AUTOINCREMENT, id_catgoria TEXT, valore INTEGER,descrizione TEXT, data TEXT,siRipete BOOL, giorni INTEGER, mesi INTEGER, anni INTEGER)'
-      );
-    }
-  );
+  database = await openDatabase(path, version: 1);
 }
 
   insert({required String descrizione, required int valore, required DateTime data, required Text simbolo}) async {
