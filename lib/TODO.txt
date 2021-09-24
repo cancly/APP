@@ -1,9 +1,3 @@
-sistemare i delta
-
-sistemare grafici a torta
-
-sistemare gruppi transazioni con filtro
-
 sistemare singola transazione
 
 sistemare eliminazione
@@ -19,3 +13,10 @@ pagina gruppi
 aggiunta gruppi
 
 elimina tutti i dati
+
+progressbar
+    - progressbar widget
+    - in costi e guadagni
+    - animazione caricamento
+    - animazione sforo
+    - database get costi e obbiettivo

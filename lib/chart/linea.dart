@@ -31,45 +31,29 @@ class _GraficoLineaState extends State<GraficoLinea> {
                     topTitles: SideTitles(showTitles: false),
                     bottomTitles: SideTitles(
                       showTitles: true,
-                      reservedSize: 22,
+                      reservedSize: 20,
                       interval: 1,
                       getTextStyles: (context, value) =>
                       const TextStyle(color: Color(0xff68737d), fontWeight: FontWeight.bold, fontSize: 16),
-                      // getTitles: (value) {
-                      //   switch (value.toInt()) {
-                      //     case 2:
-                      //       return 'MAR';
-                      //     case 5:
-                      //       return 'JUN';
-                      //     case 8:
-                      //       return 'SEP';
-                      //   }
-                      //   return '';
-                      // },
+                      getTitles: (value) {
+                        switch (widget.range) {
+                          case 0:
+                            return '${dataToString(DateTime.now().add(Duration(days: -7 + value.toInt())))}';
+                          case 1:
+                            switch (value.toInt()) {
+                            }
+                            return '';
+
+                          case 2:
+                            switch (value.toInt()) {
+                            }
+                            return '';
+                      }
+                        return '';
+                      },
                       margin: 8,
                     ),
-                    leftTitles: SideTitles(
-                      showTitles: true,
-                      interval: 1,
-                      getTextStyles: (context, value) => const TextStyle(
-                        color: Color(0xff67727d),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                      // getTitles: (value) {
-                      //   switch (value.toInt()) {
-                      //     case 1:
-                      //       return '10k';
-                      //     case 3:
-                      //       return '30k';
-                      //     case 5:
-                      //       return '50k';
-                      //   }
-                      //   return '';
-                      // },
-                      reservedSize: 32,
-                      margin: 12,
-                    ),
+                    leftTitles: SideTitles(showTitles: false)
                   ),
 
 
@@ -83,8 +67,8 @@ class _GraficoLineaState extends State<GraficoLinea> {
 
                   gridData: FlGridData(
                       show: true,
-                      verticalInterval: 7, //1 se settimana, 7 se mese, 30 se anno
-                      horizontalInterval: 100
+                      verticalInterval: widget.range==0? 1.0 : widget.range==1? 7.0 : 30.0, //1 se settimana, 7 se mese, 30 se anno
+                      horizontalInterval: 999999999999999
                   ),
 
                   lineBarsData: [

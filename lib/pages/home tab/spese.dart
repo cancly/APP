@@ -93,12 +93,21 @@ class _SpeseState extends State<Spese> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('rispetto al periodo precedente', style: TextStyle(color: Colors.grey)), //guadagno o perdita
-                      Row(
-                        children: [
-                          Text('+03.45€  ', style: TextStyle(color: Colors.green)),
-                          Text('+10.33%', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, backgroundColor: Colors.green.withOpacity(0.1)))
-                        ],
-                      ), //TODO: var
+                      FutureBuilder(
+                          future: calcolaDelta(_selection, 'S'),
+                          builder: (BuildContext, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              return Row(
+                                children: [
+                                  Text(snapshot.data[0]<=0? '${snapshot.data[0]}€  ' : '+${snapshot.data[0]}€  ', style: TextStyle(color: snapshot.data[0]<=0? Colors.green : Colors.red)),
+                                  Text(snapshot.data[0]<=0? '${snapshot.data[1].toStringAsFixed(2)}%' : '+${snapshot.data[1].toStringAsFixed(2)}%', style: TextStyle(color: snapshot.data[0]<=0? Colors.green : Colors.red, fontWeight: FontWeight.bold, backgroundColor: snapshot.data[0]<=0? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1))),
+                                ],
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          }
+                      )
                     ],
                   ) : SizedBox(),
                 ],

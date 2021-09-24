@@ -57,7 +57,7 @@ class _TransazioneState extends State<Transazione> {
   @override
   Widget build(BuildContext context) {
     var aa = getGraficaCategoria();
-    String strData = getData(widget.dati['data']);
+    String strData = getData(widget.dati['data'].toString());
     var valore = widget.dati['valore'];
     var strValore;
     if (valore < 0) {
@@ -131,7 +131,7 @@ class _TransazioneState extends State<Transazione> {
               appBar: AppBar(
                   centerTitle: true,
                   backgroundColor: Colors.black,
-                  title: widget.dati['categoria'][1],
+                  title: widget.dati['id_categoria'],
                   actions: [
                     IconButton(
                       splashRadius: 20,
@@ -195,7 +195,7 @@ class _TransazioneState extends State<Transazione> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Data:', style: TextStyle(fontSize: 18)),
-                                Text('${widget.dati['data'].day}/${widget.dati['data'].month}/${widget.dati['data'].year}', style: TextStyle(fontSize: 18)),
+                                Text('${DateTime.parse(widget.dati['data'].toString()).day}/${DateTime.parse(widget.dati['data'].toString()).month}/${DateTime.parse(widget.dati['data'].toString()).year}', style: TextStyle(fontSize: 18)),
                               ],
                             ),
                             SizedBox(height: 10),
@@ -208,8 +208,8 @@ class _TransazioneState extends State<Transazione> {
                                 TextButton(
                                   child: Row(
                                     children: [
-                                      Transform.scale(scale: 1, child: widget.dati['categoria'][0]),
-                                      Transform.scale(scale: 1.2, child: widget.dati['categoria'][1],)
+                                      Transform.scale(scale: 1, child: widget.dati['categoria']),
+                                      Transform.scale(scale: 1.2, child: widget.dati['categoria'])
                                     ],
                                   ),
                                   onPressed: () {},

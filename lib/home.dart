@@ -5,6 +5,7 @@ import 'package:portfolio/pages/home%20tab/generale.dart';
 import 'package:portfolio/pages/home%20tab/spese.dart';
 import 'package:portfolio/pages/home%20tab/guadagni.dart';
 import 'package:portfolio/pages/nuova_transazione.dart';
+import 'package:portfolio/test/test.dart';
 import 'package:portfolio/widget/simbolo.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -87,6 +88,10 @@ class _HomeState extends State<Home> {
       });
     }
 
+    if (DateTime.now().isAfter(dataLimite)) {
+      //TODO: aggiornamento date per 2 anni
+    }
+
   }
 
   void _onItemTapped(int index) {
@@ -126,7 +131,7 @@ class _HomeState extends State<Home> {
         title: Text('portfolio'),
         backgroundColor: Colors.black,
         centerTitle: true,
-        actions: [IconButton(icon: Icon(Icons.more_vert), onPressed: () {})],
+        actions: [IconButton(icon: Icon(Icons.warning_outlined), onPressed: () {Navigator.push(context, MaterialPageRoute(builder: (context) => Test()));})],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, color: Colors.white),

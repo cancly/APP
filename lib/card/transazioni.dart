@@ -34,10 +34,15 @@ class _CardTransazioniState extends State<CardTransazioni> {
       }
     }
 
-    contaTransazioni() {
+    contaTransazioni() async {
       var totale = 0;
-      for (var i in transazioni) {
-        if (getTransazione(i['data'])) {
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, 'database.db');
+
+      Database database = await openDatabase(path, version: 1);
+      var dati = await database.rawQuery('SELECT * FROM transazioni');
+      for (var i in dati) {
+        if (getTransazione(DateTime.parse(i['data'].toString()))) {
           totale++;
         }
       }
@@ -53,7 +58,8 @@ class _CardTransazioniState extends State<CardTransazioni> {
       Database database = await openDatabase(path, version: 1);
       var dati = await database.rawQuery('SELECT * FROM transazioni');
       var dati1 = new List.from(dati);
-      dati1.sort((a, b) => DateTime.parse('${b['data']}').compareTo(DateTime.parse('${a['data']}')));
+
+      widget.isPassato? dati1.sort((a, b) => DateTime.parse('${b['data']}').compareTo(DateTime.parse('${a['data']}'))) : dati1.sort((a, b) => DateTime.parse('${a['data']}').compareTo(DateTime.parse('${b['data']}')));
       var a = 0;
       for (var i in dati1) {
         if (getTransazione(DateTime.parse('${i['data']}'))) {
@@ -69,6 +75,8 @@ class _CardTransazioniState extends State<CardTransazioni> {
 
     getLista(max) async {
       var lista = await printTransazioni(max);
+      var num = await contaTransazioni();
+      lista.add(Text('$num'));
       return lista;
     }
 
@@ -80,7 +88,7 @@ class _CardTransazioniState extends State<CardTransazioni> {
               margin: const EdgeInsets.fromLTRB(15, 15, 15, 0),
               color: Colors.grey[900],
               child: Container(
-                  margin: const EdgeInsets.fromLTRB(15, 15, 15, 10),
+                  margin: const EdgeInsets.fromLTRB(15, 15, 15, 5),
                   child: FutureBuilder(
                       future: getLista(max),
                       builder: (BuildContext, AsyncSnapshot snapshot) {
@@ -90,12 +98,12 @@ class _CardTransazioniState extends State<CardTransazioni> {
                             children: [
                               Text(widget.titolo, style: const TextStyle(color: Colors.white, fontSize: 20)),
                               const SizedBox(height: 5),
-                              for (var i in snapshot.data) i,
-                              SizedBox(height: 10),
+                              for (var i in snapshot.data) if(snapshot.data.last != i) i,
+                              SizedBox(height: 5),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  if(contaTransazioni() > 3)TextButton(
+                                  if(int.parse(snapshot.data.last.data) > 3) TextButton(
                                     child: Row(
                                       children: const [
                                         Icon(Icons.more_horiz, color: Colors.white),
@@ -127,19 +135,19 @@ class _CardTransazioniState extends State<CardTransazioni> {
               ),
               body: Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                  margin: const EdgeInsets.all(15),
+                  margin: const EdgeInsets.fromLTRB(15, 15, 15, 15),
                   color: Colors.grey[900],
                   child: Container(
                     margin: const EdgeInsets.all(15),
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       child: FutureBuilder(
-                        future: getLista(max),
+                        future: getLista(0),
                         builder: (BuildContext, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [for (var i in snapshot.data) i]
+                              children: [for (var i in snapshot.data) if (i != snapshot.data.last)i]
                             );
                           } else {
                             return SizedBox();

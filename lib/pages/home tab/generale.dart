@@ -87,20 +87,6 @@ class _GeneraleState extends State<Generale> {
                     ],
                   ),
                   SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('guadagno ${frequenza1[_selection]}', style: TextStyle(color: Colors.grey)), //TODO: var data
-                      Row(
-                        children: [
-                          Text('+03.45€  ', style: TextStyle(color: Colors.green)),
-                          Text('+10.33%', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, backgroundColor: Colors.green.withOpacity(0.1)))
-                        ],
-                      ), //TODO: var
-                    ],
-                  ),
-                  SizedBox(height: 5),
-
                   _selection!= 3? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -108,12 +94,16 @@ class _GeneraleState extends State<Generale> {
                       FutureBuilder(
                         future: calcolaDelta(_selection, 'T'),
                         builder: (BuildContext, AsyncSnapshot snapshot) {
-                          return Row(
-                            children: [
-                              Text(snapshot.data[0]>=0? '+${snapshot.data[0]}€  ' : '-${snapshot.data[0]}€  ', style: TextStyle(color: snapshot.data[0]>=0? Colors.green : Colors.red)),
-                              Text(snapshot.data[0]>=0? '+${snapshot.data[1].toStringAsFixed(2)}%' : '-${snapshot.data[1].toStringAsFixed(2)}%', style: TextStyle(color: snapshot.data[0]>=0? Colors.green : Colors.red, fontWeight: FontWeight.bold, backgroundColor: snapshot.data[0]>=0? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1))),
-                            ],
-                          );
+                          if (snapshot.hasData) {
+                            return Row(
+                              children: [
+                                Text(snapshot.data[0]>=0? '+${snapshot.data[0]}€  ' : '${snapshot.data[0]}€  ', style: TextStyle(color: snapshot.data[0]>=0? Colors.green : Colors.red)),
+                                Text(snapshot.data[0]>=0? '+${snapshot.data[1].toStringAsFixed(2)}%' : '${snapshot.data[1].toStringAsFixed(2)}%', style: TextStyle(color: snapshot.data[0]>=0? Colors.green : Colors.red, fontWeight: FontWeight.bold, backgroundColor: snapshot.data[0]>=0? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1))),
+                              ],
+                            );
+                          } else {
+                            return SizedBox();
+                          }
                         }
                       ), //TODO: var
                     ],

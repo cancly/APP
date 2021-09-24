@@ -100,7 +100,7 @@ generaPunti(int numero) async {
   var punti = <FlSpot>[];
   var oggi = DateTime.now();
   var data = DateTime(oggi.year, oggi.month, oggi.day - numero);
-  var fine = DateTime(oggi.year, oggi.month, oggi.day + numero);
+  var fine = oggi;
 
   var databasesPath = await getDatabasesPath();
   String path = join(databasesPath, 'database.db');
@@ -122,23 +122,21 @@ generaPunti(int numero) async {
   dati1 = new List.from(tipoo);
 
   for (var dati in dati1) {
-    if ((DateTime.parse(dati['data'].toString()).isAfter(data)) && (DateTime.parse((dati['data'].toString())).isBefore(DateTime.now().add(Duration(days: 7))))) {
+    if ((DateTime.parse(dati['data'].toString()).isAfter(data)) && (DateTime.parse((dati['data'].toString())).isBefore(DateTime.now()))) {
       lista.add(dati);
     }
   }
 
   lista.sort((a, b) => DateTime.parse('${a['data']}').compareTo(DateTime.parse('${b['data']}')));
 
-  var x = 0;
   var millisecondiFine = fine.millisecondsSinceEpoch - data.millisecondsSinceEpoch;
 
   for (var e in lista) {
-    punti.add(FlSpot((numero * 2 * (DateTime.parse(e['data'].toString()).millisecondsSinceEpoch - data.millisecondsSinceEpoch)) / millisecondiFine , importoSommato));
 
     importoSommato += e['valore'];
-    punti.add(FlSpot((numero * 2 * (DateTime.parse(e['data'].toString()).millisecondsSinceEpoch - data.millisecondsSinceEpoch)) / millisecondiFine , importoSommato));
+    punti.add(FlSpot((numero * (DateTime.parse(e['data'].toString()).millisecondsSinceEpoch - data.millisecondsSinceEpoch)) / millisecondiFine , importoSommato));
   }
-  punti.add(FlSpot(numero * 2, importoSommato));
+  punti.add(FlSpot(numero.toDouble(), importoSommato));
   return punti;
 }
 
@@ -196,18 +194,24 @@ calcolaDelta(range, tipo) async {
   String path = join(databasesPath, 'database.db');
   Database database;
   database = await openDatabase(path, version: 1);
-  var totaleVecchio;
-  switch (tipo) {
+  num totaleVecchio = 0;
 
+  switch (tipo) {
     case 'T':
+
       List<Map> list = await database.rawQuery('SELECT * FROM transazioni');
+
+
       var list1 = new List.from(list);
+
 
       switch (range) {
         case 0:
           for (var e in list1) {
             if (DateTime.parse(e['data'].toString()).isBefore(DateTime.now().add(Duration(days: -7)))) {
+
               totaleVecchio += e['valore'];
+
             }
           }
           var totaleAttuale = await getSaldo('T');
@@ -224,22 +228,118 @@ calcolaDelta(range, tipo) async {
           var delta = totaleAttuale - totaleVecchio;
           var deltaPercentuale = delta/totaleVecchio * 100;
           return [delta, deltaPercentuale];
+
         case 2:
-          break;
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.utc(DateTime.now().year - 1, DateTime.now().month, DateTime.now().day))) {
+
+              totaleVecchio += e['valore'];
+
+            }
+          }
+          var totaleAttuale = await getSaldo('T');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+
         case 3:
+          //ocio
           break;
       }
       break;
 
     case 'S':
       List<Map> list = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0');
+      var list1 = new List.from(list);
+
+      switch(range) {
+        case 0:
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.now().add(Duration(days: -7)))) {
+
+              totaleVecchio += e['valore'];
+
+            }
+          }
+          var totaleAttuale = await getSaldo('S');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+        case 1:
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.utc(DateTime.now().year, DateTime.now().month - 1, DateTime.now().day))) {
+              totaleVecchio += e['valore'];
+            }
+          }
+          var totaleAttuale = await getSaldo('S');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+
+        case 2:
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.utc(DateTime.now().year - 1, DateTime.now().month, DateTime.now().day))) {
+
+              totaleVecchio += e['valore'];
+
+            }
+          }
+          var totaleAttuale = await getSaldo('S');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+
+        case 3:
+        //ocio
+          break;
+      }
       break;
-      //TODO:
     case 'G':
       List<Map> list = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0');
+      var list1 = new List.from(list);
+      switch (range) {
+        case 0:
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.now().add(Duration(days: -7)))) {
+
+              totaleVecchio += e['valore'];
+            }
+          }
+          var totaleAttuale = await getSaldo('G');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+        case 1:
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.utc(DateTime.now().year, DateTime.now().month - 1, DateTime.now().day))) {
+              totaleVecchio += e['valore'];
+            }
+          }
+          var totaleAttuale = await getSaldo('G');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+
+        case 2:
+          for (var e in list1) {
+            if (DateTime.parse(e['data'].toString()).isBefore(DateTime.utc(DateTime.now().year - 1, DateTime.now().month, DateTime.now().day))) {
+
+              totaleVecchio += e['valore'];
+
+            }
+          }
+          var totaleAttuale = await getSaldo('G');
+          var delta = totaleAttuale - totaleVecchio;
+          var deltaPercentuale = delta/totaleVecchio * 100;
+          return [delta, deltaPercentuale];
+
+        case 3:
+        //ocio
+        break;
+      }
       break;
-      //TODO:
   }
+
 }
 
-dataToString(data) => DateFormat.E().format(data);
+dataToString(data) => DateFormat.MMMd().format(data);

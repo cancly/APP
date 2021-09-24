@@ -2,6 +2,8 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio/constants/const.dart';
 import 'package:portfolio/widget/transazioni.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class CardTransazioni extends StatefulWidget {
   const CardTransazioni({required this.titolo, required this.isPassato, required this.tipo});
@@ -37,50 +39,139 @@ class _CardTransazioniState extends State<CardTransazioni> {
       }
     }
 
-    contaTransazioni() {
+    contaTransazioni() async {
       var totale = 0;
-      for (var i in transazioni) {
-        if (getTransazione(i['data'])) {
-          if (widget.tipo == 'costi') {
-            if (i['valore'] < 0) {
-              totale++;
-            }
-          } else {
-            if (i['valore'] > 0) {
-              totale++;
-            }
-          }
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, 'database.db');
+
+      Database database = await openDatabase(path, version: 1);
+
+      if (widget.tipo == 'costi') {
+        var transazioni = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0');
+        for (var i in transazioni) {
+          totale++;
+        }
+      } else {
+        var transazioni = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0');
+        for (var i in transazioni) {
+          totale++;
         }
       }
+
       return totale;
     }
 
 
-    printTransazioni(max) {
+    printTransazioni(max) async {
       ///max = 0 è infinito
       var lista = <Widget>[];
       var a = 0;
-      for (var i in transazioni) {
-        if (getTransazione(i['data'])) {
+      var databasesPath = await getDatabasesPath();
+      String path = join(databasesPath, 'database.db');
+
+      Database database = await openDatabase(path, version: 1);
+
+
+
           if (widget.tipo == 'costi') {
-            if (i['valore'] < 0) {
-              lista.add(Transazione(dati: i));
-              a++;
-              if (a == max && max != 0) {
+            var dati;
+            switch (_selection) {
+              case 1:
+                if (!decrescente) {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0 ORDER BY transazioni.valore DESC');
+                } else {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0 ORDER BY transazioni.valore ASC');
+                }
                 break;
+              case 0:
+                dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0');
+                break;
+              case 2:
+                if (!decrescente) {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0 ORDER BY transazioni.id_catgoria DESC');
+                } else {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore < 0 ORDER BY transazioni.id_catgoria ASC');
+                }
+                break;
+            }
+
+            var dati1 = new List.from(dati);
+
+            if (_selection == 0) {
+              //importo
+              if (decrescente) {
+                dati1.sort((a, b) =>
+                    DateTime.parse('${b['data']}').compareTo(
+                        DateTime.parse('${a['data']}')));
+              } else {
+                dati1.sort((a, b) =>
+                    DateTime.parse('${a['data']}').compareTo(
+                        DateTime.parse('${b['data']}')));
               }
             }
+            print(dati1);
+            for (var i in dati1) {
+              if (getTransazione(DateTime.parse(i['data'].toString()))) {
+                lista.add(Transazione(dati: i));
+                a++;
+                if (a == max && max != 0) {
+                  break;
+                }
+              }
+            }
+
+
           } else {
-            if (i['valore'] > 0) {
-              lista.add(Transazione(dati: i));
-              a++;
-              if (a == max && max != 0) {
+            var dati;
+            switch (_selection) {
+              case 1:
+                if (!decrescente) {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0 ORDER BY transazioni.valore DESC');
+                } else {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0 ORDER BY transazioni.valore ASC');
+                }
                 break;
+              case 0:
+                dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0');
+                break;
+              case 2:
+                if (!decrescente) {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0 ORDER BY transazioni.id_catgoria DESC');
+                } else {
+                  dati = await database.rawQuery('SELECT * FROM transazioni WHERE valore > 0 ORDER BY transazioni.id_catgoria ASC');
+                }
+                break;
+            }
+
+            var dati1 = new List.from(dati);
+
+            if (_selection == 0) {
+              //importo
+              if (decrescente) {
+                dati1.sort((a, b) =>
+                    DateTime.parse('${b['data']}').compareTo(
+                        DateTime.parse('${a['data']}')));
+              } else {
+                dati1.sort((a, b) =>
+                    DateTime.parse('${a['data']}').compareTo(
+                        DateTime.parse('${b['data']}')));
               }
             }
+            print(dati1);
+            for (var i in dati1) {
+              if (getTransazione(DateTime.parse(i['data'].toString()))) {
+                lista.add(Transazione(dati: i));
+                a++;
+                if (a == max && max != 0) {
+                  break;
+                }
+              }
+            }
+
+
           }
-        }
-      };
+      var num = await contaTransazioni();
+      lista.add(Text('$num'));
       return lista;
     }
 
@@ -125,7 +216,7 @@ class _CardTransazioniState extends State<CardTransazioni> {
                               child: Row(
                                 children: [
                                   filtri[_selection],
-                                  Icon(Icons.filter_list_outlined, color: Colors.white)
+
                                 ],
                               ),
                             ),
@@ -143,23 +234,54 @@ class _CardTransazioniState extends State<CardTransazioni> {
                   ]
                 ),
                 SizedBox(height: 5),
-                for (var i in printTransazioni(max)) i,
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if(contaTransazioni() > 3) TextButton(
-                      child: Row(
-                        children: const [
-                          Icon(Icons.more_horiz, color: Colors.white),
-                          Text(' visualizza tutte', style: TextStyle(
-                              color: Colors.white))
-                        ],
-                      ),
-                      onPressed: openContainer
-                    )
-                  ]
-                )
+                FutureBuilder(
+                  future: printTransazioni(max),
+                  builder: (BuildContext, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      List lista = [];
+
+                      for (var i in snapshot.data) if (i != snapshot.data.last) lista.add(i);
+
+                        // if (_selection == 0) {
+                        //   //importo
+                        //   if (decrescente) {
+                        //     lista.sort((a, b) =>
+                        //         DateTime.parse('${b['data']}').compareTo(
+                        //             DateTime.parse('${a['data']}')));
+                        //   } else {
+                        //     lista.sort((a, b) =>
+                        //         DateTime.parse('${a['data']}').compareTo(
+                        //             DateTime.parse('${b['data']}')));
+                        //   }
+                        // }
+                      return Column(
+                        children: [
+                          for (var i in snapshot.data) if (i != snapshot.data.last) i,
+                          SizedBox(height: 10),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                if(int.parse(snapshot.data.last.data) > 3) TextButton(
+                                    child: Row(
+                                      children: const [
+                                        Icon(Icons.more_horiz, color: Colors.white),
+                                        Text(' visualizza tutte', style: TextStyle(
+                                            color: Colors.white))
+                                      ],
+                                    ),
+                                    onPressed: openContainer
+                                )
+                              ]
+                          )
+
+                        ]
+                      );
+                    } else {
+                      return SizedBox();
+                    }
+                  }
+                ),
+
               ]
             )
           )
@@ -182,11 +304,20 @@ class _CardTransazioniState extends State<CardTransazioni> {
               margin: EdgeInsets.all(15),
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var i in printTransazioni(0)) i,
-                  ]
+                child: FutureBuilder(
+                  future: printTransazioni(0),
+                  builder: (BuildContext, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            for (var i in snapshot.data) if(i != snapshot.data.last) i,
+                          ]
+                      );
+                    }else {
+                      return SizedBox();
+                    }
+                  },
                 )
               )
             )
