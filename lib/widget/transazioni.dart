@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:portfolio/constants/const.dart';
 import 'package:portfolio/card/transazioni_con_singolo_tipo.dart';
 import 'package:portfolio/home.dart';
+import 'package:portfolio/pages/categoria.dart';
 import 'package:portfolio/widget/simbolo.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -129,6 +130,7 @@ class _TransazioneState extends State<Transazione> {
           openBuilder: (_, closeContainer) => Scaffold(
               backgroundColor: Colors.black,
               appBar: AppBar(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   centerTitle: true,
                   backgroundColor: Colors.black,
                   title: widget.dati['id_categoria'],
@@ -146,18 +148,25 @@ class _TransazioneState extends State<Transazione> {
                     IconButton(
                       splashRadius: 20,
                       icon: Icon(Icons.delete_outlined),
-                      onPressed: () {
+                      onPressed: () async {
                         var index = transazioni.indexOf(widget.dati);
-                        transazioni.removeAt(index);
+
+                        var databasesPath = await getDatabasesPath();
+                        String path = join(databasesPath, 'database.db');
+                        Database database;
+                        database = await openDatabase(path, version: 1);
+
+                        var a = database.rawQuery('DELETE FROM transazioni WHERE id = ${widget.dati['id']}');
+                        print(a);
+
                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('rimossa transazione di ${widget.dati['categoria'][1].data} dal valore di ${widget.dati['valore']} €'),
+                          content: Text('rimossa transazione di dal valore di ${widget.dati['valore']} €'),
                           action: SnackBarAction(
                             textColor: colorePrincipale,
                             label: 'annulla',
                             onPressed: () {
-                              transazioni.add(widget.dati);
-                              print('adsmodmn');
+                              //TODO
                             },
                           ),
                           backgroundColor: coloreCard,
@@ -206,13 +215,24 @@ class _TransazioneState extends State<Transazione> {
                               children: [
                                 Text('Tipo:', style: TextStyle(fontSize: 18)),
                                 TextButton(
-                                  child: Row(
-                                    children: [
-                                      Transform.scale(scale: 1, child: widget.dati['categoria']),
-                                      Transform.scale(scale: 1.2, child: widget.dati['categoria'])
-                                    ],
+                                  child: FutureBuilder(
+                                    future: getGraficaCategoria(),
+                                    builder: (BuildContext, AsyncSnapshot snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Row(
+                                          children: [
+                                            Transform.scale(scale: 1, child: snapshot.data[0]),
+                                            Transform.scale(scale: 1.2, child: snapshot.data[1])
+                                          ],
+                                        );
+                                      } else {
+                                        return SizedBox();
+                                      }
+                                    }
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Categoria(dati: widget.dati)));
+                                  },
                                 )
                               ],
                             ),
@@ -242,8 +262,6 @@ class _TransazioneState extends State<Transazione> {
       }
 
   }
-
-
 
 String getData(data) {
   data = DateTime.parse(data);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portfolio/constants/const.dart';
 import 'package:portfolio/function/function.dart';
+import 'package:portfolio/home.dart';
 import 'package:portfolio/widget/simbolo.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -620,6 +621,7 @@ class _NuovaTransazioneState extends State<NuovaTransazione> {
                         backgroundColor: coloreCard,
                       ));
                       Navigator.pop(context);
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
                     }
                   }
                 },

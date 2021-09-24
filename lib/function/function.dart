@@ -263,7 +263,7 @@ calcolaDelta(range, tipo) async {
           }
           var totaleAttuale = await getSaldo('S');
           var delta = totaleAttuale - totaleVecchio;
-          var deltaPercentuale = delta/totaleVecchio * 100;
+          var deltaPercentuale = delta/totaleVecchio * -100;
           return [delta, deltaPercentuale];
         case 1:
           for (var e in list1) {
@@ -273,7 +273,7 @@ calcolaDelta(range, tipo) async {
           }
           var totaleAttuale = await getSaldo('S');
           var delta = totaleAttuale - totaleVecchio;
-          var deltaPercentuale = delta/totaleVecchio * 100;
+          var deltaPercentuale = delta/totaleVecchio * -100;
           return [delta, deltaPercentuale];
 
         case 2:
@@ -286,7 +286,7 @@ calcolaDelta(range, tipo) async {
           }
           var totaleAttuale = await getSaldo('S');
           var delta = totaleAttuale - totaleVecchio;
-          var deltaPercentuale = delta/totaleVecchio * 100;
+          var deltaPercentuale = delta/totaleVecchio * -100;
           return [delta, deltaPercentuale];
 
         case 3:

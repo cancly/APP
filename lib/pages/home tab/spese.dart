@@ -32,11 +32,9 @@ class _SpeseState extends State<Spese> {
   Widget build(BuildContext context) {
     var saldoTotale = getSaldo('S');
     return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
       child: Column(
         children: [
-
-
-
           Card(
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
             margin: EdgeInsets.all(15),
@@ -114,12 +112,6 @@ class _SpeseState extends State<Spese> {
               ),
             ),
           ),
-
-
-
-
-
-
           CardTorta(categoria: categoria_costi),
           Divider(color: Colors.grey[850], height: 1, endIndent: 20, indent: 20),
           CardTransazioni(titolo: 'Ultime transazioni', isPassato: true, tipo: 'costi'),

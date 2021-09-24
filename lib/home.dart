@@ -138,8 +138,7 @@ class _HomeState extends State<Home> {
         backgroundColor: colorePrincipale,
         onPressed: () {
           print(transazioni.length);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => NuovaTransazione()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => NuovaTransazione()));
         },
       ),
       body: _widgetOptions.elementAt(_selectedIndex),

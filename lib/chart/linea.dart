@@ -87,8 +87,8 @@ class _GraficoLineaState extends State<GraficoLinea> {
                     ),
                   ]
               ),
-              swapAnimationDuration: Duration(milliseconds: 150), // Optional
-              swapAnimationCurve: Curves.linear, // Optional
+              swapAnimationDuration: Duration(milliseconds: 300), // Optional
+              swapAnimationCurve: Curves.easeInOut, // Optional
             );
           } else {
             return SizedBox();

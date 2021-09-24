@@ -1,14 +1,10 @@
-sistemare singola transazione
-
-sistemare eliminazione
-    - eliminazione singola
-    - eliminazione gruppo
-
 sistemare modifica
     - modifica singola
     - modifica gruppo
 
 pagina gruppi
+    - eliminazione gruppo
+    - modifica gruppo
 
 aggiunta gruppi
 
