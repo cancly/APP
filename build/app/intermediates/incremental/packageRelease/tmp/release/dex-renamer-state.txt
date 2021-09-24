@@ -1,4 +1,4 @@
-#Wed Sep 22 09:51:58 CEST 2021
+#Fri Sep 24 12:23:35 CEST 2021
 base.0=C\:\\Users\\Utente\\StudioProjects\\portfolio\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

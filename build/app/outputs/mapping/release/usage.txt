@@ -1629,8 +1629,8 @@ kotlin.sequences.SequenceScope
 androidx.fragment.app.FragmentTransition$1
 kotlin.contracts.CallsInPlace
 androidx.lifecycle.ReportFragment$ActivityInitializationListener
-androidx.core.app.ActivityCompat$1
 androidx.core.app.NotificationCompat$Action$Builder
+androidx.core.app.ActivityCompat$1
 kotlin.ranges.UIntRange$Companion
 io.flutter.view.FlutterMain$Settings
 kotlin.sequences.SequencesKt___SequencesKt$minus$2
